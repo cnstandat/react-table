@@ -1,5 +1,42 @@
 import React from 'react'
-import { defaultColumn } from './publicUtils'
+import classnames from 'classnames'
+import * as ReactIs from 'react-is'
+
+//
+export default {
+  get,
+  set,
+  takeRight,
+  last,
+  orderBy,
+  range,
+  remove,
+  clone,
+  getFirstDefined,
+  sum,
+  makeTemplateComponent,
+  groupBy,
+  isArray,
+  splitProps,
+  compactObject,
+  isSortingDesc,
+  normalizeComponent,
+  asPx,
+}
+
+function get(obj, path, def) {
+  if (!path) {
+    return obj
+  }
+  const pathObj = makePathArray(path)
+  let val
+  try {
+    val = pathObj.reduce((current, pathPart) => current[pathPart], obj)
+  } catch (e) {
+    // continue regardless of error
+  }
+  return typeof val !== 'undefined' ? val : def
+}
 
 // Find the depth of the columns
 export function findMaxDepth(columns, depth = 0) {
@@ -35,7 +72,7 @@ export function flattenColumns(columns) {
 
 export function assignColumnAccessor(column) {
   // First check for string accessor
-  let { id, accessor, Header } = column
+  let {id, accessor, Header} = column
 
   if (typeof accessor === 'string') {
     id = id || accessor
@@ -239,7 +276,7 @@ export function flattenBy(arr, key) {
 
 export function expandRows(
   rows,
-  { manualExpandedKey, expanded, expandSubRows = true }
+  {manualExpandedKey, expanded, expandSubRows = true}
 ) {
   const expandedRows = []
 
@@ -333,3 +370,43 @@ function flattenDeep(arr, newArr = []) {
   }
   return newArr
 }
+
+function splitProps({className, style, ...rest}) {
+  return {
+    className,
+    style,
+    rest: rest || {},
+  }
+}
+
+function compactObject(obj) {
+  const newObj = {}
+  if (obj) {
+    Object.keys(obj).map(key => {
+      if (
+        Object.prototype.hasOwnProperty.call(obj, key) &&
+        obj[key] !== undefined &&
+        typeof obj[key] !== 'undefined'
+      ) {
+        newObj[key] = obj[key]
+      }
+      return true
+    })
+  }
+  return newObj
+}
+
+function isSortingDesc(d) {
+  return !!(d.sort === 'desc' || d.desc === true || d.asc === false)
+}
+
+function normalizeComponent(Comp, props, fallback = Comp) {
+  if (ReactIs.isElement(Comp) || typeof Comp === 'string') {
+    return Comp
+  } else if (ReactIs.isValidElementType(Comp)) {
+    return <Comp {...props} />
+  }
+
+  return fallback
+}
+

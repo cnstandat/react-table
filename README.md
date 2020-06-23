@@ -44,7 +44,7 @@ Enjoy this library? Try them all! [React Query](https://github.com/tannerlinsley
 - Server-side/controlled data/state
 - Extensible via hook-based plugin system
 
-## Used By
+Essentially this will walk down the chain (if there are chained HOCs) and stop when it gets to the end and return the wrapped instance.
 
 - [Intuit](https://intuit.com)
 - [Google](https://google.com)
